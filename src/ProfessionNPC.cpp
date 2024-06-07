@@ -34,14 +34,26 @@ public:
 
         if (Sender == GOSSIP_SENDER_MAIN)
         {
-            if (player->HasSkill(SKILL))
+            const uint32 REQUIRED_ITEM = 49426;
+            const uint32 REQUIRED_AMOUNT = 2;
+
+            if (player->HasItemCount(REQUIRED_ITEM, REQUIRED_AMOUNT))
             {
-                player->GetSession()->SendNotification("You already have this work!");
-                CloseGossipMenuFor(player);
+                if (player->HasSkill(SKILL))
+                {
+                    player->GetSession()->SendNotification("You already have this profession!");
+                    CloseGossipMenuFor(player);
+                }
+                else
+                {
+                    player->DestroyItemCount(REQUIRED_ITEM, REQUIRED_AMOUNT, true);
+                    LearnAllRecipesInProfession(player, (SkillType)SKILL);
+                    CloseGossipMenuFor(player);
+                }
             }
             else
             {
-                LearnAllRecipesInProfession(player, (SkillType)SKILL);
+                player->GetSession()->SendNotification("You do not have enough items: contact the module administration.");
                 CloseGossipMenuFor(player);
             }
         }
